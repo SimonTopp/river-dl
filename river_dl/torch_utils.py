@@ -238,7 +238,7 @@ def predict_torch(x_data, model, batch_size):
     @param device: [str] cuda or cpu
     @return: [tensor] predicted values
     """
-    device = next(model.parameters()).device
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     data = []
     for i in range(len(x_data)):
         data.append(torch.from_numpy(x_data[i]).float())

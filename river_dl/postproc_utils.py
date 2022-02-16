@@ -120,13 +120,13 @@ def plot_ts_obs_preds(pred_file, obs_file, index_start = 0, index_end=3, outfile
     num_plots = len(segs)
     fig, axes = plt.subplots(nrows=num_plots)
     for seg, ax in zip(segs, axes.flat):
-        df = combined.loc[combined.seg_id_nat == seg]#.melt(id_vars=['seg_id_nat','date'])
+        df = combined.loc[combined.seg_id_nat == seg]
         ax.plot("pred", data = df, label="pred",alpha=0.5)
         ax.plot("obs", data=df, label = 'obs',alpha=0.5)
         ax.legend()
         ax.set_title(seg)
     plt.tight_layout()
-    if out_file:
+    if outfile:
         plt.savefig(outfile)
     else:
         plt.show()

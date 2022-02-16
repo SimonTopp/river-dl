@@ -44,7 +44,7 @@ def scale(dataset, std=None, mean=None):
     return scaled, std, mean
 
 
-def sel_partition_data(dataset, time_idx_name, start_dates, end_dates):
+def sel_partition_data(dataset, time_idx_name, start_dates, end_dates, seg_mask):
     """
     select the data from a date range or a set of date ranges
     :param dataset: [xr dataset] input or output data with date dimension
@@ -56,6 +56,8 @@ def sel_partition_data(dataset, time_idx_name, start_dates, end_dates):
     (can have multiple discontinuos periods)
     :return: dataset of just those dates
     """
+    if seg_mask is not None:
+        dataset = dataset.where(dataset.seg_id_nat.isin(seg_mask),np.nan)
    # if it just one date range
     if isinstance(start_dates, str):
         if isinstance(end_dates, str):
@@ -85,6 +87,9 @@ def separate_trn_tst(
     val_end_date,
     test_start_date,
     test_end_date,
+    train_seg_mask=None,
+    val_seg_mask=None,
+    test_seg_mask=None,
 ):
     """
     separate the train data from the test data according to the start and end
@@ -108,13 +113,13 @@ def separate_trn_tst(
     period (can have multiple discontinuous periods)
     """
     train = sel_partition_data(
-        dataset, time_idx_name, train_start_date, train_end_date
+        dataset, time_idx_name, train_start_date, train_end_date, train_seg_mask
     )
     val = sel_partition_data(
-        dataset, time_idx_name, val_start_date, val_end_date
+        dataset, time_idx_name, val_start_date, val_end_date, val_seg_mask
     )
     test = sel_partition_data(
-        dataset, time_idx_name, test_start_date, test_end_date
+        dataset, time_idx_name, test_start_date, test_end_date, test_seg_mask
     )
     return train, val, test
 
@@ -515,6 +520,9 @@ def prep_y_data(
     val_end_date,
     test_start_date,
     test_end_date,
+    train_seg_mask = None,
+    val_seg_mask=None,
+    test_seg_mask=None,
     spatial_idx_name="seg_id_nat",
     time_idx_name="date",
     seq_len=365,
@@ -578,6 +586,9 @@ def prep_y_data(
         val_end_date,
         test_start_date,
         test_end_date,
+        train_seg_mask=train_seg_mask,
+        val_seg_mask=val_seg_mask,
+        test_seg_mask=test_seg_mask,
     )
 
     if log_vars:
@@ -652,6 +663,9 @@ def prep_all_data(
     test_start_date,
     test_end_date,
     x_vars,
+    train_seg_mask=None,
+    val_seg_mask=None,
+    test_seg_mask=None,
     y_vars_finetune=None,
     y_vars_pretrain=None,
     spatial_idx_name="seg_id_nat",
@@ -885,7 +899,10 @@ def prep_all_data(
             normalize_y=normalize_y,
             y_type="obs",
             trn_offset = trn_offset,
-            tst_val_offset = tst_val_offset
+            tst_val_offset = tst_val_offset,
+            train_seg_mask=train_seg_mask,
+            val_seg_mask=val_seg_mask,
+            test_seg_mask=test_seg_mask,
         )
         # if there is a y_data_file and a pretrain file, use the observation
         # mean and standard deviation to do the scaling/centering
