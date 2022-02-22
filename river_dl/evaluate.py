@@ -197,7 +197,8 @@ def partition_metrics(
         spatial_idx_name="seg_id_nat",
         time_idx_name="date",
         group=None,
-        outfile=None
+        outfile=None,
+        seg_mask=None
 ):
     """
     calculate metrics for a certain group (or no group at all) for a given
@@ -222,6 +223,8 @@ def partition_metrics(
 
     for data_var, data in var_data.items():
         data.reset_index(inplace=True)
+        if isinstance(seg_mask, list):
+            data.loc[~data[spatial_idx_name].isin(seg_mask),'obs'] = np.nan
         if not group:
             metrics = calc_metrics(data)
             # need to convert to dataframe and transpose so it looks like the
@@ -265,6 +268,9 @@ def combined_metrics(
     time_idx_name="date",
     group=None,
     outfile=None,
+    train_seg_mask=None,
+    val_seg_mask=None,
+    test_seg_mask=None,
 ):
     """
     calculate the metrics for flow and temp and training and test sets for a
@@ -291,7 +297,8 @@ def combined_metrics(
                                         partition="trn",
                                         spatial_idx_name=spatial_idx_name,
                                         time_idx_name=time_idx_name,
-                                        group=group)
+                                        group=group,
+                                        seg_mask=train_seg_mask)
         df_all.extend([trn_metrics])
     if pred_val:
         val_metrics = partition_metrics(pred_file=pred_val,
@@ -299,7 +306,8 @@ def combined_metrics(
                                         partition="val",
                                         spatial_idx_name=spatial_idx_name,
                                         time_idx_name=time_idx_name,
-                                        group=group)
+                                        group=group,
+                                        seg_mask=val_seg_mask)
         df_all.extend([val_metrics])
     if pred_tst:
         tst_metrics = partition_metrics(pred_file=pred_tst,
@@ -307,7 +315,8 @@ def combined_metrics(
                                         partition="tst",
                                         spatial_idx_name=spatial_idx_name,
                                         time_idx_name=time_idx_name,
-                                        group=group)
+                                        group=group,
+                                        seg_mask=test_seg_mask)
         df_all.extend([tst_metrics])
     df_all = pd.concat(df_all, axis=0)
     if outfile:
