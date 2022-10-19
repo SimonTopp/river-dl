@@ -1,0 +1,74 @@
+batch_size: 455
+dist_matrix_file: data_DRB/distance_matrix_drb_full_no3558.npz
+dropout: 0
+early_stopping: 20
+finetune_learning_rate: 0.01
+ft_epochs: 200
+gitBranch: main
+gitCommit: 810233211ef517ad93d0c0e7935a05f4463cf5bf
+gitModified: []
+gitNew: []
+gitStatus: unknown
+hidden_size: 20
+input_file_info:
+  data_DRB/Obs_temp_flow_drb_full_no3558:
+    file_date: 12/28/2021 06:38:03 AM
+    file_size: 4096
+  data_DRB/distance_matrix_drb_full_no3558.npz:
+    file_date: 12/28/2021 06:37:49 AM
+    file_size: 420027
+  data_DRB/reach_attributes_drb.csv:
+    file_date: 12/28/2021 06:37:51 AM
+    file_size: 21882
+  data_DRB/sntemp_inputs_outputs_drb_full_no3558:
+    file_date: 12/28/2021 06:38:05 AM
+    file_size: 4096
+lambdas:
+- 1
+llo_csv: data_DRB/DRB_spatial/llo_groups.csv
+model: RGCN
+num_reps: 10
+obs_file: data_DRB/Obs_temp_flow_drb_full_no3558
+out_dir: results
+pred_weights: best_val_weights
+pretrain_learning_rate: 0.005
+pt_epochs: 100
+reach_attr_file: data_DRB/reach_attributes_drb.csv
+recurrent_dropout: 0.3
+results_dir: results
+runDate: 06/15/22
+seed: None
+seq_length: 180
+sntemp_file: data_DRB/sntemp_inputs_outputs_drb_full_no3558
+test_end_date:
+- '1984-09-30'
+- '2015-09-30'
+- '2021-09-30'
+test_start_date:
+- '1979-10-01'
+- '2010-10-01'
+- '2020-10-01'
+train_end_date:
+- '2006-09-30'
+- '2020-09-30'
+train_start_date:
+- '1984-10-01'
+- '2015-10-01'
+trn_offset: 90
+tst_val_offset: 90
+val_end_date:
+- '2010-09-30'
+val_start_date:
+- '2006-10-01'
+x_vars:
+- seg_slope
+- seg_elev
+- seg_width_mean
+- seg_tave_air
+- seginc_swrad
+- seg_rain
+- seginc_potet
+y_vars_finetune:
+- temp_c
+y_vars_pretrain:
+- seg_tave_water
